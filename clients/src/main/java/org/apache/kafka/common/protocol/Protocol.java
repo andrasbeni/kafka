@@ -69,7 +69,7 @@ public class Protocol {
 
     public static final Schema METADATA_REQUEST_V1 = new Schema(new Field("topics",
                                                                           ArrayOf.nullable(STRING),
-                                                                          "An array of topics to fetch metadata for. If the topics array is null or empty fetch metadata for all topics."));
+                                                                          "An array of topics to fetch metadata for. If the topics array is null fetch metadata for all topics."));
 
     /* The v2 metadata request is the same as v1. An additional field for cluster id has been added to the v2 metadata response */
     public static final Schema METADATA_REQUEST_V2 = METADATA_REQUEST_V1;
@@ -97,7 +97,7 @@ public class Protocol {
 
     public static final Schema PARTITION_METADATA_V0 = new Schema(new Field("partition_error_code",
                                                                             INT16,
-                                                                            "The error code for the partition, if any."),
+                                                                            "The error code for the partition, 0 for no error."),
                                                                   new Field("partition_id",
                                                                             INT32,
                                                                             "The id of the partition."),
@@ -113,7 +113,7 @@ public class Protocol {
 
     public static final Schema TOPIC_METADATA_V0 = new Schema(new Field("topic_error_code",
                                                                         INT16,
-                                                                        "The error code for the given topic, if any."),
+                                                                        "The error code for the given topic, 0 for no error."),
                                                               new Field("topic", STRING, "The name of the topic"),
                                                               new Field("partition_metadata",
                                                                         new ArrayOf(PARTITION_METADATA_V0),
@@ -229,7 +229,7 @@ public class Protocol {
                                                                                                      new ArrayOf(new Schema(new Field("partition",
                                                                                                                                       INT32, "The id of the partition this response entry corresponds to."),
                                                                                                                             new Field("error_code",
-                                                                                                                                      INT16, "The error from this partition, if any."),
+                                                                                                                                      INT16, "The error from this partition, 0 for no error."),
                                                                                                                             new Field("base_offset",
                                                                                                                                       INT64, "The offset assigned to the first message in the message set appended to this partition."))),
                                                                                                    "Responses are given on a per-partition basis " +
@@ -274,7 +274,7 @@ public class Protocol {
                                                                                                            new ArrayOf(new Schema(new Field("partition",
                                                                                                                                             INT32, "The id of the partition this response entry corresponds to."),
                                                                                                                                   new Field("error_code",
-                                                                                                                                            INT16, "The error from this partition, if any."),
+                                                                                                                                            INT16, "The error from this partition, 0 for no error."),
                                                                                                                                   new Field("base_offset",
                                                                                                                                             INT64, "The offset assigned to the first message in the message set appended to this partition."))),
                                                                                                          "Responses are given on a per-partition basis " +
@@ -291,7 +291,7 @@ public class Protocol {
                                                                                        new ArrayOf(new Schema(new Field("partition",
                                                                                                                         INT32, "The id of the partition this response entry corresponds to."),
                                                                                                               new Field("error_code",
-                                                                                                                        INT16, "The error from this partition, if any."),
+                                                                                                                        INT16, "The error from this partition, 0 for no error."),
                                                                                                               new Field("base_offset",
                                                                                                                         INT64, "The offset assigned to the first message in the message set appended to this partition."),
                                                                                                               new Field("log_append_time",
@@ -483,7 +483,7 @@ public class Protocol {
                                                                                new Field("metadata",
                                                                                          NULLABLE_STRING,
                                                                                          "Associated metadata the client set when committing offset."),
-                                                                               new Field("error_code", INT16, "The error code for the partition, if any."));
+                                                                               new Field("error_code", INT16, "The error code for the partition, 0 for no error."));
 
     public static final Schema OFFSET_FETCH_RESPONSE_TOPIC_V0 = new Schema(new Field("topic", STRING, "The name of the topic offset are requested for."),
                                                                            new Field("partition_responses",
@@ -505,7 +505,7 @@ public class Protocol {
     public static final Schema OFFSET_FETCH_RESPONSE_V2 = new Schema(new Field("responses",
                                                                                new ArrayOf(OFFSET_FETCH_RESPONSE_TOPIC_V0)),
                                                                      new Field("error_code",
-                                                                               INT16, "Error code for group or coordinator level errors."));
+                                                                               INT16, "Error code for group or coordinator level errors, 0 for no error."));
 
     /* v3 request is the same as v2. Throttle time has been added to v3 response */
     public static final Schema OFFSET_FETCH_REQUEST_V3 = OFFSET_FETCH_REQUEST_V2;
@@ -514,7 +514,7 @@ public class Protocol {
             new Field("responses",
                     new ArrayOf(OFFSET_FETCH_RESPONSE_TOPIC_V0)),
             new Field("error_code",
-                    INT16, "Error code for group or coordinator level errors."));
+                    INT16, "Error code for group or coordinator level errors, 0 for no error."));
 
     public static final Schema[] OFFSET_FETCH_REQUEST = {OFFSET_FETCH_REQUEST_V0, OFFSET_FETCH_REQUEST_V1, OFFSET_FETCH_REQUEST_V2, OFFSET_FETCH_REQUEST_V3};
     public static final Schema[] OFFSET_FETCH_RESPONSE = {OFFSET_FETCH_RESPONSE_V0, OFFSET_FETCH_RESPONSE_V1, OFFSET_FETCH_RESPONSE_V2, OFFSET_FETCH_RESPONSE_V3};
@@ -584,7 +584,7 @@ public class Protocol {
     public static final Schema LIST_OFFSET_RESPONSE_PARTITION_V0 = new Schema(new Field("partition",
                                                                                         INT32,
                                                                                         "Topic partition id."),
-                                                                              new Field("error_code", INT16, "The error code for the partition, if any."),
+                                                                              new Field("error_code", INT16, "The error code for the partition, 0 for no error."),
                                                                               new Field("offsets",
                                                                                         new ArrayOf(INT64),
                                                                                         "A list of offsets."));
@@ -592,7 +592,7 @@ public class Protocol {
     public static final Schema LIST_OFFSET_RESPONSE_PARTITION_V1 = new Schema(new Field("partition",
                                                                                         INT32,
                                                                                         "Topic partition id."),
-                                                                              new Field("error_code", INT16, "The error code for the partition, if any."),
+                                                                              new Field("error_code", INT16, "The error code for the partition, 0 for no error."),
                                                                               new Field("timestamp",
                                                                                         INT64,
                                                                                         "The timestamp associated with the returned offset"),
@@ -781,7 +781,7 @@ public class Protocol {
                                                                                          "Topic partition id."),
                                                                                new Field("error_code",
                                                                                          INT16,
-                                                                                         "The error code for the partition, if any."),
+                                                                                         "The error code for the partition, 0 for no error."),
                                                                                new Field("high_watermark",
                                                                                          INT64,
                                                                                          "Last committed offset."));
@@ -889,11 +889,11 @@ public class Protocol {
 
     public static final Schema LIST_GROUPS_RESPONSE_GROUP_V0 = new Schema(new Field("group_id", STRING, "The group id"),
                                                                           new Field("protocol_type", STRING, "The current group protocol type."));
-    public static final Schema LIST_GROUPS_RESPONSE_V0 = new Schema(new Field("error_code", INT16, "Error code, if any."),
+    public static final Schema LIST_GROUPS_RESPONSE_V0 = new Schema(new Field("error_code", INT16, "Error code, 0 for no error."),
                                                                     new Field("groups", new ArrayOf(LIST_GROUPS_RESPONSE_GROUP_V0), "Information about each group managed by this broker."));
     public static final Schema LIST_GROUPS_RESPONSE_V1 = new Schema(
             newThrottleTimeField(),
-            new Field("error_code", INT16, "Error code, if any."),
+            new Field("error_code", INT16, "Error code, 0 for no error."),
             new Field("groups", new ArrayOf(LIST_GROUPS_RESPONSE_GROUP_V0), "Information about each group managed by this broker."));
 
     public static final Schema[] LIST_GROUPS_REQUEST = {LIST_GROUPS_REQUEST_V0, LIST_GROUPS_REQUEST_V1};
@@ -923,7 +923,7 @@ public class Protocol {
                                                                                          BYTES,
                                                                                          "The current assignment provided by the group leader (will only be present if the group is stable)."));
 
-    public static final Schema DESCRIBE_GROUPS_RESPONSE_GROUP_METADATA_V0 = new Schema(new Field("error_code", INT16, "Error code for the group, if any."),
+    public static final Schema DESCRIBE_GROUPS_RESPONSE_GROUP_METADATA_V0 = new Schema(new Field("error_code", INT16, "Error code for the group, 0 for no error."),
                                                                                        new Field("group_id",
                                                                                                  STRING, "Id of the group metadata is fetched for."),
                                                                                        new Field("state",
@@ -1593,7 +1593,7 @@ public class Protocol {
                                              new ArrayOf(new Schema(new Field("partition",
                                                                               INT32, "Topic partition id."),
                                                                     new Field("error_code",
-                                                                              INT16, "The error code for the partition, if any.")))))))
+                                                                              INT16, "The error code for the partition, 0 for no error.")))))))
     );
 
     public static final Schema[] ADD_PARTITIONS_TO_TXN_REQUEST = {ADD_PARTITIONS_TO_TXN_REQUEST_V0};
@@ -1753,7 +1753,7 @@ public class Protocol {
                     "An array of config resources to be returned."));
 
     public static final Schema DESCRIBE_CONFIGS_RESPONSE_ENTITY_V0 = new Schema(
-            new Field("error_code", INT16, "The error code for the resource, if any."),
+            new Field("error_code", INT16, "The error code for the resource, 0 for no error."),
             new Field("error_message", NULLABLE_STRING, "The error message."),
             new Field("resource_type", INT8, "Type of the resource this response entity is for."),
             new Field("resource_name", STRING, "Name of the resource this response entity is for."),
@@ -1786,7 +1786,7 @@ public class Protocol {
             new Field("validate_only", BOOLEAN, "If true (value 1), only validation takes lace, and the changes are not apllied."));
 
     public static final Schema ALTER_CONFIGS_RESPONSE_ENTITY_V0 = new Schema(
-            new Field("error_code", INT16, "The error code for the resource, if any."),
+            new Field("error_code", INT16, "The error code for the resource, 0 for no error."),
             new Field("error_message", NULLABLE_STRING, "The error message."),
             new Field("resource_type", INT8, "Type of the resource this response entity is for."),
             new Field("resource_name", STRING, "Name of the resource this response entity is for."));
